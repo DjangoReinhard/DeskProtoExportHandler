@@ -1,0 +1,7 @@
+*.bak   
+*.class
+*~
+bin
+/nbproject/private/
+/nbbuild/
+/dist/

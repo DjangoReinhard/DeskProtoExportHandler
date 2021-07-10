@@ -1,0 +1,63 @@
+<?xml version = "1.0"?>
+<project name = "ExportHandler for DeskProto Tool-Library" default = "info">
+    <property name = "src.dir" value = "src"/>
+    <property name = "build.dir" value = "build"/>
+    <property name = "dist.dir" value = "."/>
+    <property name = "main.lib.dir" value = "../JCNCScreen/lib"/>
+    <property name = "main.dist.dir" value = "../JCNCScreen/exHdr"/>
+    <property name = "name" value = "DeskProtoExportHandler"/>
+    <property name = "handler.version" value = "0.13"/>
+
+    <path id = "master-classpath">
+        <pathelement path = "${main.lib.dir}/LCExportHandler.jar"/>
+        <pathelement path = "${build.dir}"/>
+    </path>
+    <pathconvert property = "test.classpath" refid = "master-classpath" pathsep=":">
+        <!-- map from="${lib.dir}" to="${dist.dir}"/ -->
+    </pathconvert>
+
+    <target name = "info">
+        <echo>build Exporthandler for DeskProto used by JCNCScreen</echo>
+        <echo>project-name: ${name}</echo>
+        <echo>src-dir: ${src.dir}</echo>
+        <echo>build-dir: ${build.dir}</echo>
+        <echo>classpath: ${test.classpath}</echo>
+        <echo>valid tasks: clean, build, dist, info</echo>
+    </target>
+
+    <target name = "build" description = "compile source tree java files">
+        <mkdir dir = "${build.dir}"/>
+
+        <javac destdir = "${build.dir}" source = "1.8" target = "1.8" debug = "false"
+               deprecation = "false" optimize = "true" failonerror = "true">
+            <src path = "${src.dir}"/>
+            <classpath refid = "master-classpath"/>
+        </javac>
+    </target>
+
+    <target name = "clean" description = "clean output directories">
+        <delete failonerror="false">
+            <fileset dir = "${build.dir}">
+                <include name = "**/*.class"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name = "dist" depends="clean,build">
+        <mkdir dir = "${dist.dir}"/>
+        <jar destfile = "${dist.dir}/${name}.jar"
+             basedir = "${build.dir}"
+             includes = "**">
+
+            <manifest>
+                <attribute name = "Implementation-Title" value="ExportHandler for DeskProto tool-library"/>
+                <attribute name = "Implementation-Version" value="${handler.version}"/>
+                <attribute name = "Implementation-Vendor" value="Django Reinhard"/>
+                <attribute name = "Implementation-Type" value="ExportHandler"/>
+            </manifest>
+        </jar>
+        <copy todir="${main.dist.dir}">
+            <fileset file="${dist.dir}/${name}.jar"/>
+        </copy>
+    </target>
+</project>
